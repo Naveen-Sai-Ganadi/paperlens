@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { Cited } from "./PageJump";
 
 export function Card({ title, icon, children, tone }: { title?: string; icon?: ReactNode; children: ReactNode; tone?: "accent" | "blue" }) {
   const toneCls = tone === "accent" ? "border-accent/40 bg-accent-soft/40" : tone === "blue" ? "border-blue/30 bg-blue-soft/50" : "border-line bg-card";
@@ -23,7 +24,9 @@ export function Bullets({ items }: { items: string[] }) {
       {items.map((it, i) => (
         <li key={i} className="flex gap-2.5">
           <span className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-          <span>{it}</span>
+          <span>
+            <Cited text={it} />
+          </span>
         </li>
       ))}
     </ul>

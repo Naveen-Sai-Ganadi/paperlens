@@ -97,10 +97,26 @@ export async function searchArxiv(
 }
 
 let arxivDownUntil = 0;
+
+/** Exact-title lookup (for opening papers found via citations). */
+export async function searchArxivByTitle(title: string): Promise<Paper[]> {
+  const clean = title.replace(/[^\p{L}\p{N}\s-]/gu, " ").replace(/\s+/g, " ").trim();
+  if (Date.now() > arxivDownUntil) {
+    try {
+      return parseFeed(await arxivFetch(`https://export.arxiv.org/api/query?search_query=ti:%22${encodeURIComponent(clean)}%22&max_results=5`));
+    } catch {
+      arxivDownUntil = Date.now() + 5 * 60_000;
+    }
+  }
+  return searchOpenAlex(clean, { max: 5, latest: false, field: "title.search" });
+}
 const OPENALEX_ARXIV_SOURCE = "S4306400194";
 
-async function searchOpenAlex(query: string, { max, latest }: { max: number; latest: boolean }): Promise<Paper[]> {
-  const filters = [`title_and_abstract.search:${query.replace(/[,:|]/g, " ")}`, `locations.source.id:${OPENALEX_ARXIV_SOURCE}`];
+async function searchOpenAlex(
+  query: string,
+  { max, latest, field = "title_and_abstract.search" }: { max: number; latest: boolean; field?: string },
+): Promise<Paper[]> {
+  const filters = [`${field}:${query.replace(/[,:|]/g, " ")}`, `locations.source.id:${OPENALEX_ARXIV_SOURCE}`];
   if (latest) {
     const since = new Date(Date.now() - 548 * 86_400_000).toISOString().slice(0, 10); // ~18 months
     filters.push(`from_publication_date:${since}`);

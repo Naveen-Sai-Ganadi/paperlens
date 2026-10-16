@@ -19,18 +19,23 @@ export function ChatView({
   connection,
   profile,
   requireConnect,
+  inject,
 }: {
   paper: OpenPaper;
   connection: Connection | null;
   profile: Profile;
   requireConnect: () => void;
+  /** A question sent from elsewhere (e.g. text selected in the PDF); the nonce makes repeats send again. */
+  inject?: { text: string; nonce: number } | null;
 }) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }), [messages]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages]);
 
   const send = async (text: string) => {
     if (!text.trim() || streaming) return;
@@ -43,7 +48,14 @@ export function ChatView({
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders(connection) },
-        body: JSON.stringify({ messages: history, title: paper.title, text: paper.text, problem: profile.problem, level: profile.level }),
+        body: JSON.stringify({
+          messages: history,
+          title: paper.title,
+          text: paper.text,
+          problem: profile.problem,
+          level: profile.level,
+          language: profile.language,
+        }),
       });
       if (!res.ok || !res.body) throw new Error((await res.json().catch(() => ({}))).error ?? `Request failed (${res.status})`);
       const reader = res.body.getReader();
@@ -62,6 +74,16 @@ export function ChatView({
       setStreaming(false);
     }
   };
+
+  const lastInjected = useRef(0);
+  useEffect(() => {
+    if (inject && inject.nonce !== lastInjected.current) {
+      lastInjected.current = inject.nonce;
+      void send(inject.text);
+    }
+    // send is recreated every render; only a new injection should trigger it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inject]);
 
   return (
     <div className="flex min-h-[60vh] flex-col">

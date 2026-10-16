@@ -1,4 +1,4 @@
-import { getArxivPaper, parseArxivId, searchArxiv } from "@/lib/arxiv";
+import { getArxivPaper, parseArxivId, searchArxiv, searchArxivByTitle } from "@/lib/arxiv";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -7,6 +7,7 @@ export async function GET(req: Request) {
   if (!q) return Response.json({ papers: [] });
 
   try {
+    if (searchParams.get("mode") === "title") return Response.json({ papers: await searchArxivByTitle(q) });
     // A pasted arXiv link or id jumps straight to that paper.
     const id = /arxiv\.org|^\d{4}\.\d{4,5}/.test(q) ? parseArxivId(q) : null;
     if (id) {

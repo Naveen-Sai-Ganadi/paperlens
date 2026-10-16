@@ -5,8 +5,12 @@ export const maxDuration = 120;
 
 async function pdfToText(buf: ArrayBuffer) {
   const pdf = await getDocumentProxy(new Uint8Array(buf));
-  const { totalPages, text } = await extractText(pdf, { mergePages: true });
-  return { pages: totalPages, text: text.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n") };
+  const { totalPages, text } = await extractText(pdf, { mergePages: false });
+  // Page markers let the AI cite pages ([p3]) and the viewer jump to them.
+  const marked = text
+    .map((t, i) => `[[Page ${i + 1}]]\n${t.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim()}`)
+    .join("\n\n");
+  return { pages: totalPages, text: marked };
 }
 
 /** Extracts text from an uploaded PDF (multipart) or an arXiv paper ({ arxivId }). */

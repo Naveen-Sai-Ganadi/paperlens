@@ -85,6 +85,43 @@ export const examplesSchema = z.object({
   }),
 });
 
+export const articleSchema = z.object({
+  headline: z.string().describe("An engaging, accurate headline (not the paper title)."),
+  dek: z.string().describe("One-sentence subheading that says why this paper matters."),
+  readingMinutes: z.number(),
+  sections: z
+    .array(
+      z.object({
+        heading: z.string(),
+        body: z.string().describe("Markdown paragraphs with [pN] page citations."),
+      }),
+    )
+    .describe("4-6 sections."),
+  takeaways: z.array(z.string()).describe("3-5 key takeaways."),
+});
+
+export const podcastSchema = z.object({
+  title: z.string(),
+  turns: z
+    .array(
+      z.object({
+        speaker: z.enum(["host", "expert"]),
+        text: z.string().describe("What this speaker says. Plain spoken language: no markdown, math notation, or citations."),
+      }),
+    )
+    .describe("A 3-5 minute conversation, 16-28 turns. The host asks what a curious listener would; the expert explains with analogies."),
+});
+
+export const compareSchema = z.object({
+  summary: z.string().describe("Two or three sentences on how the papers relate. Markdown."),
+  dimensions: z
+    .array(z.object({ dimension: z.string(), a: z.string(), b: z.string() }))
+    .describe("5-8 rows: problem, core idea, method, data, results, cost, limitations — whatever matters for these two papers."),
+  chooseA: z.string().describe("When to use or read paper A's approach."),
+  chooseB: z.string().describe("When to use or read paper B's approach."),
+  forYourProblem: z.string().describe("Which fits the reader's problem better and why. Markdown."),
+});
+
 export const quizSchema = z.object({
   questions: z
     .array(
@@ -113,9 +150,11 @@ export const recommendSchema = z.object({
 
 export const SECTIONS = {
   overview: overviewSchema,
+  article: articleSchema,
   approach: approachSchema,
   examples: examplesSchema,
   quiz: quizSchema,
+  podcast: podcastSchema,
 } as const;
 
 export type SectionKey = keyof typeof SECTIONS;
@@ -123,4 +162,7 @@ export type Overview = z.infer<typeof overviewSchema>;
 export type Approach = z.infer<typeof approachSchema>;
 export type Examples = z.infer<typeof examplesSchema>;
 export type Quiz = z.infer<typeof quizSchema>;
+export type Article = z.infer<typeof articleSchema>;
+export type Podcast = z.infer<typeof podcastSchema>;
+export type Comparison = z.infer<typeof compareSchema>;
 export type Recommendation = z.infer<typeof recommendSchema>["picks"][number];

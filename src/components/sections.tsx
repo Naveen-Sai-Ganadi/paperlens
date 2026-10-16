@@ -2,9 +2,10 @@
 
 import { AlertTriangle, BookMarked, Code2, Compass, FlaskConical, GitCompare, ListChecks, Sigma, Sparkles, Trophy, Workflow } from "lucide-react";
 import katex from "katex";
-import type { Approach, Examples, Overview } from "@/lib/schemas";
+import type { Approach, Article, Examples, Overview } from "@/lib/schemas";
 import { Markdown } from "./Markdown";
 import { Mermaid } from "./Mermaid";
+import { Cited } from "./PageJump";
 import { Bullets, Card } from "./ui";
 
 export function OverviewView({ data }: { data: Overview }) {
@@ -12,7 +13,9 @@ export function OverviewView({ data }: { data: Overview }) {
     <div className="space-y-5">
       <div className="rounded-xl bg-ink p-5 text-paper">
         <p className="mb-1 text-xs font-semibold tracking-widest uppercase opacity-60">TL;DR</p>
-        <p className="font-serif text-xl leading-snug">{data.tldr}</p>
+        <p className="font-serif text-xl leading-snug">
+          <Cited text={data.tldr} />
+        </p>
       </div>
 
       <Card title="Explain it simply" icon={<Sparkles size={17} className="text-accent" />} tone="accent">
@@ -28,7 +31,9 @@ export function OverviewView({ data }: { data: Overview }) {
           {data.keyContributions.map((c, i) => (
             <li key={i} className="flex gap-3 text-[0.95rem] leading-relaxed">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-soft text-xs font-bold text-accent">{i + 1}</span>
-              <span>{c}</span>
+              <span>
+                <Cited text={c} />
+              </span>
             </li>
           ))}
         </ol>
@@ -42,7 +47,9 @@ export function OverviewView({ data }: { data: Overview }) {
           {data.keyConcepts.map((k) => (
             <div key={k.term} className="rounded-xl border border-line bg-card p-4">
               <p className="font-semibold">{k.term}</p>
-              <p className="mt-1 text-sm leading-relaxed">{k.explanation}</p>
+              <p className="mt-1 text-sm leading-relaxed">
+                <Cited text={k.explanation} />
+              </p>
               <p className="mt-2 border-l-2 border-blue/40 pl-2.5 text-sm text-muted italic">{k.analogy}</p>
             </div>
           ))}
@@ -85,7 +92,9 @@ export function ApproachView({ data }: { data: Approach }) {
             </p>
           </figcaption>
           <Mermaid code={d.mermaid} />
-          <p className="mt-4 border-t border-line pt-3 text-sm text-muted">{d.caption}</p>
+          <p className="mt-4 border-t border-line pt-3 text-sm text-muted">
+            <Cited text={d.caption} />
+          </p>
         </figure>
       ))}
 
@@ -102,7 +111,7 @@ export function ApproachView({ data }: { data: Approach }) {
                 <Markdown className="mt-1">{s.detail}</Markdown>
                 <p className="mt-2 rounded-md bg-blue-soft/60 px-2.5 py-1.5 text-sm">
                   <span className="font-semibold text-blue">Why it matters: </span>
-                  {s.whyItMatters}
+                  <Cited text={s.whyItMatters} />
                 </p>
               </div>
             </li>
@@ -131,7 +140,9 @@ export function ApproachView({ data }: { data: Approach }) {
           {data.comparison.map((c, i) => (
             <div key={i} className="grid gap-1 border-b border-line p-3 last:border-0 sm:grid-cols-[10rem_1fr] sm:gap-4">
               <p className="text-sm font-semibold">{c.approach}</p>
-              <p className="text-sm leading-relaxed">{c.difference}</p>
+              <p className="text-sm leading-relaxed">
+                <Cited text={c.difference} />
+              </p>
             </div>
           ))}
         </div>
@@ -182,7 +193,9 @@ export function ProblemView({ data, problem }: { data: Examples; problem: string
           {a.howToApply.map((s, i) => (
             <li key={i} className="flex gap-3 text-[0.95rem] leading-relaxed">
               <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-paper">{i + 1}</span>
-              <span>{s}</span>
+              <span>
+                <Cited text={s} />
+              </span>
             </li>
           ))}
         </ol>
@@ -196,5 +209,47 @@ export function ProblemView({ data, problem }: { data: Examples; problem: string
         </Card>
       </div>
     </div>
+  );
+}
+
+export function ArticleView({ data, title }: { data: Article; title: string }) {
+  return (
+    <article className="rounded-2xl border border-line bg-card px-5 py-7 sm:px-9 sm:py-9">
+      <p className="mb-3 text-xs font-semibold tracking-widest text-accent uppercase">
+        AI overview · {Math.max(1, Math.round(data.readingMinutes))} min read
+      </p>
+      <h2 className="font-serif text-3xl leading-tight font-semibold tracking-tight">{data.headline}</h2>
+      <p className="mt-3 font-serif text-lg text-muted italic">
+        <Cited text={data.dek} />
+      </p>
+      <p className="mt-4 border-b border-line pb-6 text-xs text-muted">About “{title}”. Page references like p3 jump to that page of the paper.</p>
+
+      <nav className="my-6 rounded-xl bg-sunk p-4 text-sm">
+        <p className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Jump to section</p>
+        <ol className="space-y-1">
+          {data.sections.map((s, i) => (
+            <li key={i}>
+              <a href={`#article-${i}`} className="text-blue hover:underline">
+                {i + 1}. {s.heading}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
+      {data.sections.map((s, i) => (
+        <section key={i} id={`article-${i}`} className="scroll-mt-4">
+          <h3 className="mt-8 mb-2 font-serif text-xl font-semibold">{s.heading}</h3>
+          <Markdown className="text-[1.02rem]">{s.body}</Markdown>
+        </section>
+      ))}
+
+      <div className="mt-8 rounded-xl border border-accent/40 bg-accent-soft/40 p-5">
+        <p className="mb-3 flex items-center gap-2 font-serif text-lg font-semibold">
+          <ListChecks size={17} className="text-accent" /> Key takeaways
+        </p>
+        <Bullets items={data.takeaways} />
+      </div>
+    </article>
   );
 }

@@ -10,7 +10,8 @@
     "desktop:bundle": "next build && node desktop/prepare.mjs",
     "desktop": "npm run desktop:bundle && electron .",
     "desktop:dist": "npm run desktop:bundle && electron-builder --publish never",
-    "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.notarize=false -c.mac.identity=null"
+    "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.notarize=false -c.mac.identity=null",
+    "postinstall": "node scripts/copy-pdf-worker.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.81",
@@ -24,6 +25,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-markdown": "^10.1.0",
+    "react-pdf": "^11.0.0",
     "rehype-katex": "^7.0.1",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",

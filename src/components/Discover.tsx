@@ -3,7 +3,7 @@
 import { ArrowRight, Clock, FileUp, Loader2, Search, Sparkles, Target } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 import type { Paper } from "@/lib/arxiv";
-import { postJSON, type Connection, type OpenPaper, type Profile } from "@/lib/client";
+import { loadArxivPaper, postJSON, type Connection, type OpenPaper, type Profile } from "@/lib/client";
 import type { Level } from "@/lib/prompts";
 import type { Recommendation } from "@/lib/schemas";
 import type { Recent } from "./App";
@@ -90,8 +90,7 @@ export function Discover({
     setOpening(p.id);
     setError("");
     try {
-      const { text, pages } = await postJSON<{ text: string; pages: number }>("/api/papers/text", { arxivId: p.id }, null);
-      onOpen({ ...p, source: "arxiv", pdfSrc: `/api/pdf?id=${p.id}`, text, pages });
+      onOpen(await loadArxivPaper(p.id, p));
     } catch (e) {
       setError((e as Error).message);
       setOpening(null);
