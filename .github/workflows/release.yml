@@ -1,0 +1,71 @@
+# Builds, signs and uploads the desktop installers when a version tag is pushed:
+#   git tag v0.1.0 && git push origin v0.1.0
+# The release is created as a draft; publish it on GitHub once you've checked it.
+name: Release desktop app
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write # upload release assets
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-14, target: --mac --arm64, signing: mac }
+          - { os: macos-15-intel, target: --mac --x64, signing: mac }
+          - { os: windows-latest, target: --win --x64, signing: win }
+          - { os: ubuntu-latest, target: --linux --x64, signing: none }
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      # Installers are only published signed. Fail early instead of shipping an unsigned build.
+      - name: Check signing credentials
+        if: matrix.signing != 'none'
+        shell: bash
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+        run: |
+          if [ "${{ matrix.signing }}" = mac ]; then
+            for v in CSC_LINK APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
+              [ -n "${!v}" ] || { echo "::error::Missing secret for $v (see README › Releasing)"; exit 1; }
+            done
+          else
+            [ -n "$WIN_CSC_LINK" ] || { echo "::error::Missing secret WIN_CSC_LINK (see README › Releasing)"; exit 1; }
+          fi
+
+      - run: npm ci
+
+      - name: Build the bundled server
+        run: npm run desktop:bundle
+
+      - name: Build, sign and upload installer
+        run: npx electron-builder ${{ matrix.target }} --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # macOS: Developer ID Application certificate (.p12, base64) + notarization
+          CSC_LINK: ${{ matrix.signing == 'mac' && secrets.MAC_CSC_LINK || '' }}
+          CSC_KEY_PASSWORD: ${{ matrix.signing == 'mac' && secrets.MAC_CSC_KEY_PASSWORD || '' }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Windows: code-signing certificate (.pfx, base64)
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ matrix.signing == 'mac' && 'true' || 'false' }}

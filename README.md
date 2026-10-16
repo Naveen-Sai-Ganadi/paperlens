@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PaperLens
 
-## Getting Started
+Read a research paper on the left, understand it on the right.
 
-First, run the development server:
+- **Discover**: describe the problem you want to solve (plus an optional topic). PaperLens searches recent arXiv papers and your model picks the 6 most useful ones, with a reason for each.
+- **Open any paper**: search, paste an arXiv link, or upload a PDF.
+- **Split view**: the PDF (or its extracted text) on the left. On the right, tabs for Overview (TL;DR, ELI5, key concepts), Approach & diagrams (steps, Mermaid diagrams, equations in plain English), Examples (worked examples, a code sketch), Your problem (how to apply the paper), Quiz (multiple-choice and open questions with answers), and Ask (chat about the paper).
+- **Use your own account**, two ways:
+  - **Your Claude or ChatGPT subscription** (desktop app only). PaperLens asks the official Claude Code or Codex app on your computer to answer, with its tools switched off. You sign in to those apps yourself; PaperLens never sees your login.
+  - **An API key** from Anthropic or OpenAI (desktop or web). The key stays on your device and is sent with each request straight to the provider.
+
+## Desktop app (macOS)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run desktop        # build and open the app
+npm run desktop:dist:unsigned   # local test installer: dist-desktop/PaperLens-mac-arm64.dmg
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To use a subscription, install and sign in to the official tools once:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install -g @anthropic-ai/claude-code && claude      # Claude Pro / Max
+npm install -g @openai/codex && codex login             # ChatGPT Plus / Pro
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+With a ChatGPT login, Codex accepts only some models (`gpt-5.6-sol` works; `gpt-5.5` and `gpt-5.6` are rejected).
 
-## Learn More
+The app runs its server on `127.0.0.1` with a per-launch token that only its own window sends, so other programs and websites can't use your subscription through it. Local test builds are unsigned, so macOS asks for confirmation the first time you open them. Public releases are signed (see below).
 
-To learn more about Next.js, take a look at the following resources:
+## Releasing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Public installers are built, signed and uploaded by GitHub Actions (`.github/workflows/release.yml`) for macOS (Apple Silicon and Intel), Windows and Linux. The workflow refuses to build Mac or Windows installers without signing credentials.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Add these repository secrets (GitHub → Settings → Secrets and variables → Actions):
 
-## Deploy on Vercel
+   | Secret | What it is |
+   | --- | --- |
+   | `MAC_CSC_LINK` | Your **Developer ID Application** certificate exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
+   | `MAC_CSC_KEY_PASSWORD` | The password you set when exporting the `.p12` |
+   | `APPLE_ID` | Your Apple Developer account email |
+   | `APPLE_APP_SPECIFIC_PASSWORD` | An app-specific password from account.apple.com, used for notarization |
+   | `APPLE_TEAM_ID` | Your 10-character team ID (developer.apple.com → Membership) |
+   | `WIN_CSC_LINK` | Windows code-signing certificate (`.pfx`), base64-encoded |
+   | `WIN_CSC_KEY_PASSWORD` | Its password |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Bump `version` in `package.json`, then tag and push:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git tag v0.1.0 && git push origin v0.1.0
+   ```
+
+3. When the workflow finishes, open the draft release on GitHub, check it, and click **Publish**. The website's download page (`/download`) links to `releases/latest`, so it picks up the new version automatically.
+
+## Web / local development
+
+```bash
+npm run dev   # http://localhost:3000
+```
+
+In `npm run dev` the subscription option also works, since the server is on your machine. A hosted deployment only offers API keys. No server-side environment variables are needed.
+
+## How it works
+
+| Piece | Where |
+| --- | --- |
+| Paper search (arXiv API, OpenAlex fallback when arXiv is throttled) | `src/lib/arxiv.ts`, `src/app/api/papers/search` |
+| Recommendations (LLM writes the queries, then ranks the candidates) | `src/app/api/papers/recommend` |
+| PDF → text (`unpdf`) and same-origin PDF proxy | `src/app/api/papers/text`, `src/app/api/pdf` |
+| Subscription access through the Claude Code / Codex CLIs | `src/lib/cli.ts` |
+| Desktop shell (Electron) | `desktop/main.cjs` |
+| Explanation agents (4 sections generated in parallel as structured output) | `src/app/api/analyze`, `src/lib/schemas.ts`, `src/lib/prompts.ts` |
+| Follow-up chat (streaming) | `src/app/api/chat` |
+| UI | `src/components/*` |
+
+Generated explanations are cached per paper in localStorage, so reopening a paper is instant.

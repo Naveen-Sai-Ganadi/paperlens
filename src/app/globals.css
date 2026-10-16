@@ -1,26 +1,160 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --paper: #f5f1e8;
+  --card: #fffcf5;
+  --sunk: #ece6d9;
+  --ink: #1f1c16;
+  --muted: #6d6656;
+  --line: #e0d8c6;
+  --accent: #c2410c;
+  --accent-soft: #fbe3d3;
+  --blue: #1e40af;
+  --blue-soft: #dfe7fb;
+  --good: #15803d;
+  --good-soft: #dcf2e2;
+  --bad: #b91c1c;
+  --bad-soft: #fbe0e0;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --paper: #14130f;
+    --card: #1c1b16;
+    --sunk: #24221c;
+    --ink: #ece7db;
+    --muted: #a39b88;
+    --line: #34312a;
+    --accent: #fb923c;
+    --accent-soft: #3a2416;
+    --blue: #93b4ff;
+    --blue-soft: #1d2640;
+    --good: #4ade80;
+    --good-soft: #15291c;
+    --bad: #f87171;
+    --bad-soft: #351a1a;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-sunk: var(--sunk);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-blue: var(--blue);
+  --color-blue-soft: var(--blue-soft);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-newsreader);
+}
+
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Long-form explanation text */
+.prose-lens {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.prose-lens p {
+  margin: 0.6em 0;
+}
+.prose-lens ul,
+.prose-lens ol {
+  margin: 0.5em 0;
+  padding-left: 1.3em;
+}
+.prose-lens ul {
+  list-style: disc;
+}
+.prose-lens ol {
+  list-style: decimal;
+}
+.prose-lens li {
+  margin: 0.25em 0;
+}
+.prose-lens strong {
+  font-weight: 600;
+}
+.prose-lens code {
+  font-family: var(--font-geist-mono);
+  font-size: 0.85em;
+  background: var(--sunk);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.prose-lens pre {
+  background: var(--sunk);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  margin: 0.8em 0;
+}
+.prose-lens pre code {
+  background: none;
+  padding: 0;
+}
+.prose-lens h1,
+.prose-lens h2,
+.prose-lens h3 {
+  font-family: var(--font-newsreader);
+  font-weight: 600;
+  margin: 1em 0 0.4em;
+}
+.prose-lens table {
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.9em;
+}
+.prose-lens th,
+.prose-lens td {
+  border: 1px solid var(--line);
+  padding: 0.35em 0.6em;
+}
+.prose-lens a {
+  color: var(--blue);
+  text-decoration: underline;
+}
+.prose-lens .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.2em 0;
+}
+
+.mermaid-host svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--sunk) 0%, var(--line) 50%, var(--sunk) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: 6px;
 }

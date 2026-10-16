@@ -6,21 +6,95 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "desktop:bundle": "next build && node desktop/prepare.mjs",
+    "desktop": "npm run desktop:bundle && electron .",
+    "desktop:dist": "npm run desktop:bundle && electron-builder --publish never",
+    "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.notarize=false -c.mac.identity=null"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.81",
+    "@ai-sdk/openai": "^4.0.95",
+    "ai": "^7.0.142",
+    "cross-spawn": "^7.0.6",
+    "katex": "^0.19.0",
+    "lucide-react": "^1.58.0",
+    "mermaid": "^12.2.0",
     "next": "16.4.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "unpdf": "^1.9.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
+    "@types/cross-spawn": "^6.0.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^44.8.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "main": "desktop/main.cjs",
+  "description": "Read research papers with clear explanations, diagrams and quizzes",
+  "build": {
+    "appId": "app.paperlens.desktop",
+    "productName": "PaperLens",
+    "directories": {
+      "output": "dist-desktop"
+    },
+    "files": [
+      "desktop/main.cjs",
+      "package.json",
+      "!node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.education",
+      "target": [
+        "dmg"
+      ],
+      "hardenedRuntime": true,
+      "notarize": true,
+      "entitlements": "desktop/entitlements.mac.plist",
+      "entitlementsInherit": "desktop/entitlements.mac.plist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Education"
+    },
+    "afterPack": "desktop/after-pack.cjs",
+    "npmRebuild": false,
+    "artifactName": "PaperLens-${os}-${arch}.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Naveen-Sai-Ganadi",
+        "repo": "paperlens",
+        "releaseType": "draft"
+      }
+    ]
+  },
+  "author": {
+    "name": "Naveen Sai Ganadi"
+  },
+  "repository": "github:Naveen-Sai-Ganadi/paperlens"
 }
