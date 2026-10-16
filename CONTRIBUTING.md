@@ -26,7 +26,7 @@ Desktop app: `npm run desktop` builds and opens it.
 ## Before opening a pull request
 
 ```bash
-npx tsc --noEmit   # types
+npm run typecheck  # types
 npm run lint       # ESLint
 npm run build      # production build
 ```

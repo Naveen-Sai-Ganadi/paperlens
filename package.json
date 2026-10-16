@@ -11,7 +11,8 @@
     "desktop": "npm run desktop:bundle && electron .",
     "desktop:dist": "npm run desktop:bundle && electron-builder --publish never",
     "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.notarize=false -c.mac.identity=null",
-    "postinstall": "node scripts/copy-pdf-worker.mjs"
+    "postinstall": "node scripts/copy-pdf-worker.mjs",
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.81",

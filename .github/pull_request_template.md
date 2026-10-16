@@ -4,4 +4,4 @@
 
 <!-- For UI changes, add a screenshot. For prompt/schema changes, list the papers you tried. -->
 
-- [ ] `npx tsc --noEmit`, `npm run lint` and `npm run build` pass
+- [ ] `npm run typecheck`, `npm run lint` and `npm run build` pass
