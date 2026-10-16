@@ -1,0 +1,6 @@
+# Vercel CLI doesn't read .gitignore; keep local build output and installers out of uploads
+.next
+dist-desktop
+node_modules
+.playwright-mcp
+.env*
