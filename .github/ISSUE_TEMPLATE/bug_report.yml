@@ -1,0 +1,33 @@
+name: Bug report
+description: Something isn't working
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: paper
+    attributes:
+      label: Paper
+      description: arXiv ID or link, if the bug is about a specific paper.
+      placeholder: "1706.03762"
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where
+      options: [Website, Desktop app (macOS), Desktop app (Windows), Desktop app (Linux), Local development]
+    validations:
+      required: true
+  - type: dropdown
+    id: model
+    attributes:
+      label: Connected model
+      options: [Claude subscription, ChatGPT subscription, Anthropic API key, OpenAI API key, Not connected]
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or console errors

@@ -44,10 +44,10 @@ jobs:
         run: |
           if [ "${{ matrix.signing }}" = mac ]; then
             for v in CSC_LINK APPLE_ID APPLE_APP_SPECIFIC_PASSWORD APPLE_TEAM_ID; do
-              [ -n "${!v}" ] || { echo "::error::Missing secret for $v (see README › Releasing)"; exit 1; }
+              [ -n "${!v}" ] || { echo "::error::Missing secret for $v (see docs/RELEASING.md)"; exit 1; }
             done
           else
-            [ -n "$WIN_CSC_LINK" ] || { echo "::error::Missing secret WIN_CSC_LINK (see README › Releasing)"; exit 1; }
+            [ -n "$WIN_CSC_LINK" ] || { echo "::error::Missing secret WIN_CSC_LINK (see docs/RELEASING.md)"; exit 1; }
           fi
 
       - run: npm ci

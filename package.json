@@ -89,8 +89,6 @@
     "publish": [
       {
         "provider": "github",
-        "owner": "Naveen-Sai-Ganadi",
-        "repo": "paperlens",
         "releaseType": "draft"
       }
     ]
@@ -98,5 +96,7 @@
   "author": {
     "name": "Naveen Sai Ganadi"
   },
-  "repository": "github:Naveen-Sai-Ganadi/paperlens"
+  "repository": "github:Naveen-Sai-Ganadi/paperlens",
+  "license": "MIT",
+  "homepage": "https://github.com/Naveen-Sai-Ganadi/paperlens"
 }

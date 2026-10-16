@@ -1,76 +1,89 @@
 # PaperLens
 
-Read a research paper on the left, understand it on the right.
+**Read the paper on the left. Understand it on the right.**
 
-- **Discover**: describe the problem you want to solve (plus an optional topic). PaperLens searches recent arXiv papers and your model picks the 6 most useful ones, with a reason for each.
-- **Open any paper**: search, paste an arXiv link, or upload a PDF.
-- **Split view**: the PDF (or its extracted text) on the left. On the right, tabs for Overview (TL;DR, ELI5, key concepts), Approach & diagrams (steps, Mermaid diagrams, equations in plain English), Examples (worked examples, a code sketch), Your problem (how to apply the paper), Quiz (multiple-choice and open questions with answers), and Ask (chat about the paper).
-- **Use your own account**, two ways:
-  - **Your Claude or ChatGPT subscription** (desktop app only). PaperLens asks the official Claude Code or Codex app on your computer to answer, with its tools switched off. You sign in to those apps yourself; PaperLens never sees your login.
-  - **An API key** from Anthropic or OpenAI (desktop or web). The key stays on your device and is sent with each request straight to the provider.
+PaperLens is an open-source research-paper reader. Open any arXiv paper or PDF and get clear explanations, diagrams, worked examples and a quiz to check you understood it. It runs on your own Claude or ChatGPT account, including the subscription you already pay for, through the desktop app.
 
-## Desktop app (macOS)
+[Website](https://paperlens-one.vercel.app) · [Download](https://paperlens-one.vercel.app/download) · [Report a bug](../../issues/new/choose) · [Contribute](CONTRIBUTING.md)
+
+[![CI](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml/badge.svg)](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+## Features
+
+**Find papers**
+- Describe the problem you're solving; PaperLens suggests the best recent papers, with a reason for each.
+- Search arXiv, paste an arXiv link, or upload a PDF.
+- Swap `arxiv.org` for the PaperLens domain in any arXiv link (`/abs/<id>` or `/pdf/<id>`) to open it here.
+
+**Read with an AI tutor**
+- **Overview**: TL;DR, an explain-it-simply version, key concepts with analogies, results and limitations.
+- **Article**: a blog-style write-up of the paper.
+- **Approach & diagrams**: the method step by step, auto-drawn diagrams, and key equations in plain English.
+- **Examples**: worked examples with numbers and a code sketch.
+- **Your problem**: how to apply the paper to what you're working on.
+- **Quiz**: multiple-choice and open questions, with answers and explanations.
+- **Ask**: chat about the paper.
+- **Page citations**: every `p3` reference jumps the PDF to that page.
+- **Select text in the PDF** to ask about it, simplify it, or translate it.
+- **18 languages** for all explanations.
+- **Audio overview**: a two-voice conversation about the paper.
+
+**Go further**
+- **Related**: similar papers, references and citing papers, with side-by-side comparison of any two.
+- **Cite** in BibTeX, APA or MLA, and find the paper's **code**.
+
+## Use your own AI account
+
+| Option | Where | Cost |
+| --- | --- | --- |
+| **Claude Pro/Max or ChatGPT Plus/Pro subscription** | Desktop app | Included in your subscription |
+| **Anthropic or OpenAI API key** | Website or desktop app | Pay per use to the provider |
+
+With a subscription, PaperLens asks the official [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Codex](https://github.com/openai/codex) app on your computer to answer, with its tools switched off. You sign in to those apps yourself; PaperLens never sees your login. Anthropic's and OpenAI's terms for those apps apply.
+
+API keys stay on your device and are sent only to your chosen provider.
+
+## Run it yourself
+
+Requirements: Node.js 22+.
 
 ```bash
+git clone https://github.com/Naveen-Sai-Ganadi/paperlens.git
+cd paperlens
 npm install
-npm run desktop        # build and open the app
-npm run desktop:dist:unsigned   # local test installer: dist-desktop/PaperLens-mac-arm64.dmg
+npm run dev            # website at http://localhost:3000
+npm run desktop        # or build and open the desktop app
 ```
 
-To use a subscription, install and sign in to the official tools once:
+No environment variables are required; see [`.env.example`](.env.example) for optional ones.
+
+To use a subscription, install and sign in to one of the official tools once:
 
 ```bash
-npm install -g @anthropic-ai/claude-code && claude      # Claude Pro / Max
-npm install -g @openai/codex && codex login             # ChatGPT Plus / Pro
+npm install -g @anthropic-ai/claude-code && claude   # Claude Pro / Max
+npm install -g @openai/codex && codex login          # ChatGPT Plus / Pro
 ```
 
-With a ChatGPT login, Codex accepts only some models (`gpt-5.6-sol` works; `gpt-5.5` and `gpt-5.6` are rejected).
-
-The app runs its server on `127.0.0.1` with a per-launch token that only its own window sends, so other programs and websites can't use your subscription through it. Local test builds are unsigned, so macOS asks for confirmation the first time you open them. Public releases are signed (see below).
-
-## Releasing
-
-Public installers are built, signed and uploaded by GitHub Actions (`.github/workflows/release.yml`) for macOS (Apple Silicon and Intel), Windows and Linux. The workflow refuses to build Mac or Windows installers without signing credentials.
-
-1. Add these repository secrets (GitHub → Settings → Secrets and variables → Actions):
-
-   | Secret | What it is |
-   | --- | --- |
-   | `MAC_CSC_LINK` | Your **Developer ID Application** certificate exported as `.p12`, base64-encoded (`base64 -i cert.p12 \| pbcopy`) |
-   | `MAC_CSC_KEY_PASSWORD` | The password you set when exporting the `.p12` |
-   | `APPLE_ID` | Your Apple Developer account email |
-   | `APPLE_APP_SPECIFIC_PASSWORD` | An app-specific password from account.apple.com, used for notarization |
-   | `APPLE_TEAM_ID` | Your 10-character team ID (developer.apple.com → Membership) |
-   | `WIN_CSC_LINK` | Windows code-signing certificate (`.pfx`), base64-encoded |
-   | `WIN_CSC_KEY_PASSWORD` | Its password |
-
-2. Bump `version` in `package.json`, then tag and push:
-
-   ```bash
-   git tag v0.1.0 && git push origin v0.1.0
-   ```
-
-3. When the workflow finishes, open the draft release on GitHub, check it, and click **Publish**. The website's download page (`/download`) links to `releases/latest`, so it picks up the new version automatically.
-
-## Web / local development
-
-```bash
-npm run dev   # http://localhost:3000
-```
-
-In `npm run dev` the subscription option also works, since the server is on your machine. A hosted deployment only offers API keys. No server-side environment variables are needed.
+**Self-hosting the website:** it's a standard Next.js app. Deploy it to Vercel, or run `npm run build && npm start` on any Node.js host. A hosted website offers API keys only; subscriptions need the desktop app or a local server.
 
 ## How it works
 
 | Piece | Where |
 | --- | --- |
-| Paper search (arXiv API, OpenAlex fallback when arXiv is throttled) | `src/lib/arxiv.ts`, `src/app/api/papers/search` |
-| Recommendations (LLM writes the queries, then ranks the candidates) | `src/app/api/papers/recommend` |
-| PDF → text (`unpdf`) and same-origin PDF proxy | `src/app/api/papers/text`, `src/app/api/pdf` |
-| Subscription access through the Claude Code / Codex CLIs | `src/lib/cli.ts` |
-| Desktop shell (Electron) | `desktop/main.cjs` |
-| Explanation agents (4 sections generated in parallel as structured output) | `src/app/api/analyze`, `src/lib/schemas.ts`, `src/lib/prompts.ts` |
-| Follow-up chat (streaming) | `src/app/api/chat` |
-| UI | `src/components/*` |
+| Paper search (arXiv, with OpenAlex fallback) | `src/lib/arxiv.ts`, `src/app/api/papers/*` |
+| PDF viewer (pdf.js) and text extraction (unpdf) | `src/components/PdfViewer.tsx`, `src/app/api/papers/text` |
+| AI sections, generated in parallel as structured output | `src/app/api/analyze`, `src/lib/prompts.ts`, `src/lib/schemas.ts` |
+| Model access: API keys, or Claude Code / Codex for subscriptions | `src/lib/llm.ts`, `src/lib/cli.ts` |
+| Related papers and citations (OpenAlex) | `src/app/api/papers/related` |
+| Desktop app (Electron), with a token-protected local server | `desktop/` |
 
-Generated explanations are cached per paper in localStorage, so reopening a paper is instant.
+Explanations are cached in your browser per paper and language, so reopening a paper is instant.
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md). Maintainers publishing desktop builds: see [docs/RELEASING.md](docs/RELEASING.md).
+
+## License
+
+[MIT](LICENSE) © Naveen Sai Ganadi and PaperLens contributors

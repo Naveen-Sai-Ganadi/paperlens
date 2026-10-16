@@ -4,7 +4,8 @@ import { Apple, ArrowLeft, BookOpenText, Download, Monitor, ShieldCheck, Termina
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const REPO = "Naveen-Sai-Ganadi/paperlens";
+// Forks set NEXT_PUBLIC_GITHUB_REPO so downloads point at their own releases.
+const REPO = process.env.NEXT_PUBLIC_GITHUB_REPO || "Naveen-Sai-Ganadi/paperlens";
 // Version-free asset names (see package.json build.artifactName) keep these links stable.
 const latest = (file: string) => `https://github.com/${REPO}/releases/latest/download/${file}`;
 
