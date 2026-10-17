@@ -4,7 +4,7 @@
 
 PaperLens is an open-source research-paper reader. Open any arXiv paper or PDF and get clear explanations, diagrams, worked examples and a quiz to check you understood it. It runs on your own Claude or ChatGPT account, including the subscription you already pay for, through the desktop app.
 
-[Website](https://paperlens-one.vercel.app) · [Download](https://paperlens-one.vercel.app/download) · [Report a bug](../../issues/new/choose) · [Contribute](CONTRIBUTING.md)
+[Report a bug](../../issues/new/choose) · [Contribute](CONTRIBUTING.md)
 
 [![CI](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml/badge.svg)](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
