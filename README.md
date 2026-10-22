@@ -4,7 +4,9 @@
 
 PaperLens is an open-source research-paper reader. Open any arXiv paper or PDF and get clear explanations, diagrams, worked examples and a quiz to check you understood it. It runs on your own Claude or ChatGPT account, including the subscription you already pay for, through the desktop app.
 
-[Report a bug](../../issues/new/choose) · [Contribute](CONTRIBUTING.md)
+[Download](../../releases/latest) · [Report a bug](../../issues/new/choose) · [Contribute](CONTRIBUTING.md) · [Terms of use](TERMS.md)
+
+> **For education and personal use.** PaperLens helps you learn from research papers. Its explanations are AI-generated and can be wrong, so check important points against the paper. You use your own Claude or ChatGPT account and are responsible for following its terms. See the [Terms of Use and Disclaimer](TERMS.md).
 
 [![CI](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml/badge.svg)](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -16,6 +18,8 @@ Get the desktop app for macOS (Apple Silicon or Intel), Windows or Linux from th
 The installers aren't signed with paid Apple or Microsoft certificates yet, so the first launch needs one extra step:
 - **macOS:** open PaperLens, click **Done** on the warning, then go to System Settings → Privacy & Security and click **Open Anyway**.
 - **Windows:** if SmartScreen says it protected your PC, click **More info → Run anyway**.
+
+Download PaperLens only from this repository's releases page or the official website. By installing it, you agree to the [Terms of use](TERMS.md).
 
 ## Features
 
@@ -92,6 +96,24 @@ Explanations are cached in your browser per paper and language, so reopening a p
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md). Maintainers publishing desktop builds: see [docs/RELEASING.md](docs/RELEASING.md).
 
+## Terms of use and disclaimer
+
+PaperLens is a free, open-source project for **education and personal use**. By using it you agree to the [Terms of Use and Disclaimer](TERMS.md). In short:
+
+- **AI can be wrong.** Explanations, diagrams, quizzes and answers are AI-generated. Check them against the original paper, and don't rely on them for grading, peer review or professional decisions.
+- **Your account, your responsibility.** PaperLens doesn't provide AI access. You connect your own Claude or ChatGPT subscription, or an API key, and must follow [Anthropic's](https://www.anthropic.com/legal) or [OpenAI's](https://openai.com/policies) terms. Use it for your own reading; don't share or resell access through it.
+- **Respect the papers.** Papers belong to their authors. Follow each paper's license and cite the original.
+- **No data collection.** There are no accounts. Settings, keys and explanations stay on your device and go only to the services you use.
+- **No warranty.** PaperLens is provided as is, and the authors aren't liable for any loss from using it.
+
 ## License
 
 [MIT](LICENSE) © Naveen Sai Ganadi and PaperLens contributors
+
+### Third-party services
+
+PaperLens uses [arXiv](https://arxiv.org) (thank you to arXiv for use of its open access interoperability) and [OpenAlex](https://openalex.org) for papers and citations, and works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Codex](https://github.com/openai/codex), and the Anthropic and OpenAI APIs. Each is subject to its own terms.
+
+### Trademarks
+
+PaperLens is an independent project and isn't affiliated with or endorsed by Anthropic, OpenAI, arXiv, OpenAlex or alphaXiv. Claude and Claude Code are trademarks of Anthropic. ChatGPT and Codex are trademarks of OpenAI. All other names belong to their owners.

@@ -191,6 +191,10 @@ export function DownloadPage() {
               Prefer not to install anything? <Link href="/" className="text-blue underline">Use PaperLens in the browser</Link> with an Anthropic or OpenAI API key. PaperLens is open source on{" "}
               <a href={`https://github.com/${REPO}`} className="text-blue underline">GitHub</a>.
             </p>
+            <p>
+              PaperLens is free and meant for education and personal use. Its AI explanations can be wrong, so check important points against the paper. By downloading, you agree to the{" "}
+              <a href={`https://github.com/${REPO}/blob/main/TERMS.md`} className="text-blue underline">Terms of Use and Disclaimer</a>.
+            </p>
           </div>
         </section>
       </main>
