@@ -68,7 +68,11 @@ jobs:
 
       - name: Build and upload installer
         shell: bash
-        run: npx electron-builder ${{ matrix.target }} ${{ steps.sign.outputs.flags }} --publish always
+        # Unset missing secrets: electron-builder reads an empty CSC_LINK as a path to the project folder.
+        run: |
+          [ -n "$CSC_LINK" ] || unset CSC_LINK CSC_KEY_PASSWORD
+          [ -n "$WIN_CSC_LINK" ] || unset WIN_CSC_LINK WIN_CSC_KEY_PASSWORD
+          npx electron-builder ${{ matrix.target }} ${{ steps.sign.outputs.flags }} --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # macOS: Developer ID Application certificate (.p12, base64) + notarization
