@@ -18,9 +18,19 @@ const PLATFORMS: Record<PlatformKey, { label: string; detail: string; file: stri
   linux: { label: "Linux", detail: "AppImage, 64-bit", file: "PaperLens-linux-x86_64.AppImage", icon: Terminal },
 };
 
+// The installers aren't signed with paid Apple/Microsoft certificates yet, so the first launch needs one extra click.
 const STEPS: Record<"mac" | "win" | "linux", string[]> = {
-  mac: ["Open the downloaded .dmg file.", "Drag PaperLens into your Applications folder.", "Open PaperLens from Applications."],
-  win: ["Run the downloaded installer.", "Choose where to install and click Install.", "Open PaperLens from the Start menu."],
+  mac: [
+    "Open the downloaded .dmg file and drag PaperLens into your Applications folder.",
+    "Open PaperLens. macOS says it can't check the app for malicious software; click Done.",
+    "Open System Settings → Privacy & Security, scroll down and click Open Anyway next to PaperLens, then Open.",
+    "From then on, PaperLens opens normally.",
+  ],
+  win: [
+    "Run the downloaded installer.",
+    "If Windows says it protected your PC, click More info, then Run anyway.",
+    "Choose where to install and click Install, then open PaperLens from the Start menu.",
+  ],
   linux: ["Make the file executable: chmod +x PaperLens-linux-x86_64.AppImage", "Double-click it, or run ./PaperLens-linux-x86_64.AppImage"],
 };
 
@@ -173,6 +183,9 @@ export function DownloadPage() {
           <div className="space-y-2">
             <p>
               <strong className="text-ink">How subscriptions work:</strong> PaperLens asks the official Claude Code or Codex app on your computer to answer, with its tools switched off. Your login stays in those apps and PaperLens never sees it. Anthropic&apos;s and OpenAI&apos;s terms for Claude Code and Codex apply to that usage.
+            </p>
+            <p>
+              <strong className="text-ink">Why the security prompt:</strong> PaperLens isn&apos;t signed with a paid Apple or Microsoft developer certificate yet, so your computer asks you to confirm it once. The installers are built by GitHub Actions straight from the public source code.
             </p>
             <p>
               Prefer not to install anything? <Link href="/" className="text-blue underline">Use PaperLens in the browser</Link> with an Anthropic or OpenAI API key. PaperLens is open source on{" "}

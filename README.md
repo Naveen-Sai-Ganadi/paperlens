@@ -9,6 +9,14 @@ PaperLens is an open-source research-paper reader. Open any arXiv paper or PDF a
 [![CI](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml/badge.svg)](https://github.com/Naveen-Sai-Ganadi/paperlens/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+## Download
+
+Get the desktop app for macOS (Apple Silicon or Intel), Windows or Linux from the [latest release](../../releases/latest).
+
+The installers aren't signed with paid Apple or Microsoft certificates yet, so the first launch needs one extra step:
+- **macOS:** open PaperLens, click **Done** on the warning, then go to System Settings → Privacy & Security and click **Open Anyway**.
+- **Windows:** if SmartScreen says it protected your PC, click **More info → Run anyway**.
+
 ## Features
 
 **Find papers**

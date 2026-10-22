@@ -10,7 +10,7 @@
     "desktop:bundle": "next build && node desktop/prepare.mjs",
     "desktop": "npm run desktop:bundle && electron .",
     "desktop:dist": "npm run desktop:bundle && electron-builder --publish never",
-    "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.notarize=false -c.mac.identity=null",
+    "desktop:dist:unsigned": "npm run desktop:bundle && electron-builder --publish never -c.mac.identity=- -c.mac.hardenedRuntime=false -c.mac.notarize=false",
     "postinstall": "node scripts/copy-pdf-worker.mjs",
     "typecheck": "next typegen && tsc --noEmit"
   },
@@ -51,6 +51,7 @@
   "build": {
     "appId": "app.paperlens.desktop",
     "productName": "PaperLens",
+    "icon": "desktop/icon.png",
     "directories": {
       "output": "dist-desktop"
     },
